@@ -1,13 +1,21 @@
+from infrastructure.config import config
 from infrastructure.logging import configure_logging, get_logger
 
-# SET UP LOGGING
-configure_logging(debug=True)
-logger = get_logger(__name__)
-logger.info("atlas_starting")
-logger.error("error_occured")
-logger.critical("critical_error")
-logger.debug("debug_test")
+configure_logging(
+    level=config.get("logging.level"),
+    console=config.get("logging.console"),
+    json_logs=config.get("logging.json"),
+    log_dir=config.get("logging.log_dir"),
+)
 
-# EXAMPLE AGENT LOGGER
-agent_logger = get_logger("agent").bind(agent_id="news_scanner", department="news")
-agent_logger.info("scan_started")
+log = get_logger("atlas.startup")
+
+log.info("atlas_starting", environment=config.env)
+
+log.debug("test_debug")
+
+log.info(
+    "config_loaded", database=config.get("database.name"), debug=config.get("app.debug")
+)
+
+log.error("test_error")

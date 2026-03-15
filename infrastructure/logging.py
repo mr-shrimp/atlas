@@ -1,32 +1,38 @@
 import logging
 import sys
-import structlog
-from pathlib import Path
 from logging.handlers import RotatingFileHandler
+from pathlib import Path
 
-LOG_DIR = Path("logs")
-LOG_DIR.mkdir(exist_ok=True)
+import structlog
 
 
-def configure_logging(debug: bool = True):
+def configure_logging(
+    level: str = "INFO",
+    console: bool = True,
+    json_logs: bool = False,
+    log_dir: str = "logs",
+):
     """
-    Set up application-wide logging using structlog and the standard logging module.
+    Configure Atlas logging system.
 
-    This function configures logging handlers for:
-      - Console output (human-readable if debug is True, JSON if False)
-      - Rotating file logging (JSON format)
-      - Rotating error file logging (JSON format, only for errors and above)
-
-    Log processors add structured context, timestamps, log levels, stack info, and exception formatting.
-    Log files are rotated when they reach 10MB, keeping up to 5 backups.
+    Supports:
+        - Console logging (optional)
+        - JSON or human-readable console output
+        - Rotating file logs
+        - Separate error log file
+        - Structured logging using structlog
 
     Args:
-        debug (bool, optional): If True, enables debug-level logging and human-readable console output.
-                               If False, sets info-level logging and JSON console output. Defaults to True.
-
-    Raises:
-        OSError: If log files cannot be created or written to.
+        level (str): Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+        console (bool): Enable console logging
+        json_logs (bool): Use JSON format for console logs
+        log_dir (str): Directory for log files
     """
+
+    # Create log directory
+    log_directory = Path(log_dir)
+    log_directory.mkdir(parents=True, exist_ok=True)
+
     timestamper = structlog.processors.TimeStamper(fmt="iso")
 
     shared_processors = [
@@ -46,8 +52,14 @@ def configure_logging(debug: bool = True):
         cache_logger_on_first_use=True,
     )
 
+    # Choose console renderer
+    if json_logs:
+        console_renderer = structlog.processors.JSONRenderer()
+    else:
+        console_renderer = structlog.dev.ConsoleRenderer()
+
     console_formatter = structlog.stdlib.ProcessorFormatter(
-        processor=structlog.dev.ConsoleRenderer(),
+        processor=console_renderer,
         foreign_pre_chain=shared_processors,
     )
 
@@ -56,41 +68,47 @@ def configure_logging(debug: bool = True):
         foreign_pre_chain=shared_processors,
     )
 
+    # Root logger
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG if debug else logging.INFO)
+    root_logger.setLevel(getattr(logging, level.upper(), logging.INFO))
 
-    # CONSOLE
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(console_formatter)
+    # Clear existing handlers
+    root_logger.handlers.clear()
 
-    # FILE
+    # Console handler
+    if console:
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(console_formatter)
+        root_logger.addHandler(console_handler)
+
+    # Main log file
     file_handler = RotatingFileHandler(
-        LOG_DIR / "atlas.log", maxBytes=10_000_000, backupCount=5
+        log_directory / "atlas.log",
+        maxBytes=10_000_000,
+        backupCount=5,
     )
     file_handler.setFormatter(file_formatter)
+    root_logger.addHandler(file_handler)
 
-    # ERROR FILE
+    # Error log file
     error_handler = RotatingFileHandler(
-        LOG_DIR / "errors.log", maxBytes=10_000_000, backupCount=5
+        log_directory / "errors.log",
+        maxBytes=10_000_000,
+        backupCount=5,
     )
     error_handler.setLevel(logging.ERROR)
     error_handler.setFormatter(file_formatter)
-
-    root_logger.handlers.clear()
-    root_logger.addHandler(console_handler)
-    root_logger.addHandler(file_handler)
     root_logger.addHandler(error_handler)
 
 
 def get_logger(name: str = None):
     """
-    Creates and returns a structlog logger instance with the specified name.
+    Return a structured logger instance.
 
     Args:
-        name (str, optional): The name of the logger. Defaults to None.
+        name (str): Logger name
 
     Returns:
-        structlog.BoundLogger: A logger instance configured with the given name.
+        structlog.BoundLogger
     """
-    logger = structlog.get_logger(name)
-    return logger
+    return structlog.get_logger(name)

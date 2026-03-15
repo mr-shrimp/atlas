@@ -1,0 +1,11 @@
+app:
+  debug: true
+
+database:
+  name: atlas
+
+logging:
+  level: DEBUG
+  console: true
+  json: false
+  log_dir: dev_logs
