@@ -118,7 +118,7 @@ class Config:
         user = self.env_var("DATABASE_USER")
         password = self.env_var("DATABASE_PASSWORD")
 
-        return f"postgresql://{user}:{password}@{host}:{port}/{name}"
+        return f"postgresql+psycopg://{user}:{password}@{host}:{port}/{name}"
 
 
 # GLOBAL CONFIG INSTANCE
