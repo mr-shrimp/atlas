@@ -8,6 +8,7 @@ psycopg-binary==3.3.3
 psycopg-pool==3.3.0
 python-dotenv==1.2.2
 PyYAML==6.0.3
+redis==7.3.0
 ruff==0.15.6
 SQLAlchemy==2.0.48
 structlog==25.5.0

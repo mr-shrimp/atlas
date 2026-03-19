@@ -1,5 +1,6 @@
-from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
+
+from sqlalchemy.orm import sessionmaker
 
 from infrastructure.database import get_engine
 

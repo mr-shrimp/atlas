@@ -1,6 +1,7 @@
 import os
-import yaml
 from pathlib import Path
+
+import yaml
 from dotenv import load_dotenv
 
 # LOAD ENVIRONMENT VARIABLES
@@ -110,13 +111,20 @@ class Config:
 
     # -----------------------------------------------
     def database_url(self):
-
-        host = self.get("database.host")
-        port = self.get("database.port")
-        name = self.get("database.name")
-
+        """
+        Constructs the PostgreSQL database URL from environment variables.
+        Retrieves the database user, password, host, port, and name from environment
+        variables and formats them into a SQLAlchemy-compatible PostgreSQL URL.
+        Returns:
+            str: The formatted PostgreSQL database URL.
+        Raises:
+            KeyError: If any of the required environment variables are not set.
+        """
         user = self.env_var("DATABASE_USER")
         password = self.env_var("DATABASE_PASSWORD")
+        host = self.env_var("DATABASE_HOST")
+        port = self.env_var("DATABASE_PORT")
+        name = self.env_var("DATABASE_NAME")
 
         return f"postgresql+psycopg://{user}:{password}@{host}:{port}/{name}"
 

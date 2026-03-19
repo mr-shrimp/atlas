@@ -56,7 +56,7 @@ def configure_logging(
     if json_logs:
         console_renderer = structlog.processors.JSONRenderer()
     else:
-        console_renderer = structlog.dev.ConsoleRenderer()
+        console_renderer = structlog.dev.ConsoleRenderer(colors=True)
 
     console_formatter = structlog.stdlib.ProcessorFormatter(
         processor=console_renderer,
@@ -106,9 +106,9 @@ def get_logger(name: str = None):
     Return a structured logger instance.
 
     Args:
-        name (str): Logger name
+        name (str): Logger name, used to identify the source of log messages
 
     Returns:
-        structlog.BoundLogger
+        structlog.BoundLogger: A bound logger instance with the provided name attached
     """
-    return structlog.get_logger(name)
+    return structlog.get_logger(name).bind(logger=name)
