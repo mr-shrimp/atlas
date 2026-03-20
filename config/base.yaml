@@ -8,3 +8,10 @@ logging:
   console: false
   json: true
   log_dir: logs
+
+email:
+  provider: smtp
+  host: smtp.gmail.com
+  port: 587
+  from_address: atlas@system.ai
+  default_email_to: t.sikenaris@gmail.com

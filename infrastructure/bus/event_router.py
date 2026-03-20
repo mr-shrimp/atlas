@@ -52,5 +52,9 @@ def route_event(event: dict):
 
     if not handler:
         logger.warning("no_handler_found", event_type=event_type)
+        return
 
-    handler(event)
+    try:
+        handler(event)
+    except Exception as e:
+        logger.error("event_handler_failure", event_type=event_type, error=str(e))
