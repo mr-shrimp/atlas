@@ -2,20 +2,31 @@
 
 {% block content %}
 
-<!-- STATUS BADGE -->
+<!-- DYNAMIC STATUS BADGE -->
+{% if severity == "critical" %}
+  {% set badge_bg = "#7f1d1d" %}
+  {% set label = "🚨 SYSTEM DEGRADED (CRITICAL)" %}
+{% elif severity == "warning" %}
+  {% set badge_bg = "#78350f" %}
+  {% set label = "⚠ SYSTEM DEGRADED (WARNING)" %}
+{% else %}
+  {% set badge_bg = "#065f46" %}
+  {% set label = "✅ ATLAS ONLINE" %}
+{% endif %}
+
 <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:15px;">
   <tr>
     <td align="center">
       <span style="
         display:inline-block;
         padding:6px 14px;
-        background-color:#065f46;
-        color:#d1fae5;
         border-radius:20px;
         font-size:12px;
         font-weight:bold;
+        color:white;
+        background-color:{{ badge_bg }};
       ">
-        ✅ ATLAS ONLINE
+        {{ label }}
       </span>
     </td>
   </tr>
@@ -23,7 +34,7 @@
 
 <!-- INTRO -->
 <p style="margin:0 0 15px; font-size:16px;">
-  Atlas has successfully started and is operational.
+  Atlas has started and completed initial system diagnostics.
 </p>
 
 <!-- SYSTEM INFO -->
@@ -55,12 +66,28 @@
         <tr>
           <td style="padding:10px; background-color:#111827; border-radius:6px;">
 
-            <strong>{{ service.name }}</strong><br/>
+            <strong>{{ service.service }}</strong><br/>
 
-            {% if 'connected' in service.status %}
-              <span style="color:#10b981;">✔ Connected</span>
-            {% else %}
+            {% if service.severity == "critical" %}
               <span style="color:#ef4444;">✖ {{ service.status }}</span>
+            {% elif service.severity == "warning" %}
+              <span style="color:#f59e0b;">⚠ {{ service.status }}</span>
+            {% else %}
+              <span style="color:#10b981;">✔ {{ service.status }}</span>
+            {% endif %}
+
+            {% if service.message %}
+              <br/>
+              <span style="font-size:12px; color:#9ca3af;">
+                {{ service.message }}
+              </span>
+            {% endif %}
+
+            {% if service.details and service.details.latency_ms %}
+              <br/>
+              <span style="font-size:11px; color:#6b7280;">
+                ⏱ {{ service.details.latency_ms }} ms
+              </span>
             {% endif %}
 
           </td>

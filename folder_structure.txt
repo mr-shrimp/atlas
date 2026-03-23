@@ -1,0 +1,136 @@
+└── atlas
+    ├── agents
+    │   ├── ceo
+    │   │   └── atlas_ceo_agent.py
+    │   ├── news
+    │   │   ├── new_manager_agent.py
+    │   │   └── new_scanner_agent.py
+    │   ├── agent_factory.py
+    │   └── base_agent.py
+    ├── atlas_api
+    │   ├── routes
+    │   ├── schemas
+    │   └── dependencies.py
+    ├── communications
+    │   └── templates
+    │       └── email
+    │           ├── base.html
+    │           ├── system_alert.html
+    │           └── system_startup.html
+    ├── config
+    │   ├── base.yaml
+    │   ├── dev.yaml
+    │   └── prod.yaml
+    ├── db
+    │   ├── migrations
+    │   │   ├── versions
+    │   │   │   └── da3d6b5a26fa_initial_schema.py
+    │   │   ├── env.py
+    │   │   ├── README
+    │   │   └── script.py.mako
+    │   ├── models
+    │   │   ├── schemas
+    │   │   │   ├── account
+    │   │   │   │   ├── password_credential.py
+    │   │   │   │   ├── preference_type.py
+    │   │   │   │   ├── session.py
+    │   │   │   │   ├── user.py
+    │   │   │   │   └── user_preference.py
+    │   │   │   ├── agents
+    │   │   │   │   ├── agent.py
+    │   │   │   │   ├── autonomy_level.py
+    │   │   │   │   ├── department.py
+    │   │   │   │   ├── model.py
+    │   │   │   │   ├── role.py
+    │   │   │   │   ├── task.py
+    │   │   │   │   ├── task_execution.py
+    │   │   │   │   ├── task_log.py
+    │   │   │   │   ├── task_queue.py
+    │   │   │   │   ├── task_status.py
+    │   │   │   │   ├── team.py
+    │   │   │   │   ├── team_member.py
+    │   │   │   │   └── team_role.py
+    │   │   │   └── identity
+    │   │   │       ├── being.py
+    │   │   │       ├── being_role.py
+    │   │   │       └── being_type.py
+    │   │   ├── __init__.py
+    │   │   └── base.py
+    │   ├── sql
+    │   │   └── schemas
+    │   │       ├── core
+    │   │       ├── account.sql
+    │   │       ├── agents.sql
+    │   │       └── identity.sql
+    │   └── db.sql
+    ├── departments
+    │   ├── department_manager.py
+    │   ├── department_registry.py
+    │   └── news_department.py
+    ├── dev_logs
+    ├── docker
+    │   ├── docker-compose.yml
+    │   └── Dockerfile
+    ├── events
+    │   └── email_handlers.py
+    ├── infrastructure
+    │   ├── bus
+    │   │   ├── event_bus.py
+    │   │   ├── event_router.py
+    │   │   └── event_schema.py
+    │   ├── handlers
+    │   │   └── system_handlers.py
+    │   ├── config.py
+    │   ├── database.py
+    │   ├── logging.py
+    │   └── session.py
+    ├── interfaces
+    │   ├── cli
+    │   │   └── cli_interface.py
+    │   ├── telegram
+    │   │   ├── telegram_bot.py
+    │   │   └── telegram_handlers.py
+    │   └── web
+    │       └── dashboard.py
+    ├── llm
+    │   ├── anthropic_provider.py
+    │   ├── local_model_provider.py
+    │   ├── model_router.py
+    │   └── openai_provider.py
+    ├── logs
+    ├── orchestration
+    │   ├── autonomy_manager.py
+    │   ├── decision_engine.py
+    │   ├── trask_router.py
+    │   └── workflow_engine.py
+    ├── scheduler
+    │   ├── celery_app.py
+    │   ├── scheduled_jobs.py
+    │   └── task_dispatcher.py
+    ├── services
+    │   ├── alert_service.py
+    │   ├── email_service.py
+    │   └── template_service.py
+    ├── tests
+    │   ├── test_agents.py
+    │   ├── test_tasks.py
+    │   └── test_tools.py
+    ├── tmp
+    ├── tools
+    │   ├── development_tools
+    │   │   └── github_tool.py
+    │   ├── utility_tools
+    │   │   ├── calculator_tool.py
+    │   │   └── web_search_tool.py
+    │   ├── base_tool.py
+    │   └── tool_registry.py
+    ├── utils
+    │   ├── id_generator.py
+    │   ├── json_utils.py
+    │   └── time_utils.py
+    ├── .env.example
+    ├── .gitignore
+    ├── alembic.ini
+    ├── main.py
+    ├── README.md
+    └── requirements.txt

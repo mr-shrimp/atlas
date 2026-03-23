@@ -11,6 +11,9 @@ from infrastructure.bus.event_router import register, route_event
 from infrastructure.bus.event_schema import Event, create_event
 from infrastructure.config import config
 from infrastructure.database import get_engine
+from infrastructure.diagnostics.evaluator import evaluate
+from infrastructure.diagnostics.health_registry import run_all_checks
+from infrastructure.diagnostics.reporter import report_diagnostics
 from infrastructure.logging import configure_logging, get_logger
 from services.alert_service import evaluate_system_health
 
@@ -43,31 +46,15 @@ def event_handler(event: Event):
     route_event(event)
 
 
-def check_database():
-    try:
-        engine = get_engine()
-        with engine.connect() as conn:
-            conn.execute(text("SELECT 1"))
-        return "connected"
-    except Exception as e:
-        return f"error: {str(e)}"
+def run_start_up_diagnostics():
+    import infrastructure.diagnostics.health_checks.database_check  # noqa
+    import infrastructure.diagnostics.health_checks.logging_check  # noqa
+    import infrastructure.diagnostics.health_checks.redis_check  # noqa
 
+    results = run_all_checks()
+    report = evaluate(results)
 
-def check_event_bus():
-    try:
-        r = get_redis()
-        r.ping()
-        return "connected"
-    except Exception as e:
-        return f"error: {str(e)}"
-
-
-def check_logging():
-    try:
-        logger.info("logging_health_check")
-        return "connected"
-    except Exception as e:
-        return f"error: {str(e)}"
+    return report
 
 
 def main():
@@ -76,16 +63,13 @@ def main():
     listener_thread = threading.Thread(target=start_listener, daemon=True)
     listener_thread.start()
 
-    services = [
-        {"name": "Database", "status": check_database()},
-        {"name": "Event Bus", "status": check_event_bus()},
-        {"name": "Logging", "status": check_logging()},
-    ]
+    report = run_start_up_diagnostics()
+
+    send_startup_email(report)
+
+    report_diagnostics(report)
 
     time.sleep(1)
-
-    send_startup_email(services)
-    evaluate_system_health(services)
 
     while True:
         time.sleep(1)
@@ -102,19 +86,21 @@ def run_migrations():
     raise
 
 
-def send_startup_email(services: list[dict]):
+def send_startup_email(report: dict):
     event = create_event(
         event_type="email.send",
         source="atlas.startup",
         payload={
-            "to": "t.sikenaris@gmail.com",
+            "to": config.get("email.default_email_to"),
             "subject": f"[Atlas] System Online ({config.env.upper()})",
             "template": "system_startup.html",
             "context": {
                 "environment": config.env,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "source": "main.py",
-                "services": services,
+                "services": report["services"],
+                "severity": report["severity"],
+                "status": report["status"],
             },
         },
     )
