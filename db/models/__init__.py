@@ -24,3 +24,7 @@ from db.models.schemas.agents.task import Task  # noqa: F401
 from db.models.schemas.agents.task_queue import TaskQueue  # noqa: F401
 from db.models.schemas.agents.task_execution import TaskExecution  # noqa: F401
 from db.models.schemas.agents.task_log import TaskLog  # noqa: F401
+
+# AUTOMATION
+from db.models.schemas.automation.scheduled_task import ScheduledTask  # noqa: F401
+from db.models.schemas.automation.scheduled_task_execution import ScheduledTaskExecution  # noqa: F401

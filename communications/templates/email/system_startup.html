@@ -1,23 +1,17 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
 
-{% block content %}
+<!-- STATUS BADGE -->
+{% set overall_severity = severity | lower %} {% if overall_severity ==
+"critical" %} {% set badge_bg = "#7f1d1d" %} {% set label = "🚨 SYSTEM DEGRADED"
+%} {% elif overall_severity == "warning" %} {% set badge_bg = "#78350f" %} {%
+set label = "⚠ PARTIAL DEGRADATION" %} {% else %} {% set badge_bg = "#065f46" %}
+{% set label = "✅ ALL SYSTEMS OPERATIONAL" %} {% endif %}
 
-<!-- DYNAMIC STATUS BADGE -->
-{% if severity == "critical" %}
-  {% set badge_bg = "#7f1d1d" %}
-  {% set label = "🚨 SYSTEM DEGRADED (CRITICAL)" %}
-{% elif severity == "warning" %}
-  {% set badge_bg = "#78350f" %}
-  {% set label = "⚠ SYSTEM DEGRADED (WARNING)" %}
-{% else %}
-  {% set badge_bg = "#065f46" %}
-  {% set label = "✅ ATLAS ONLINE" %}
-{% endif %}
-
-<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:15px;">
+<table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 15px">
   <tr>
     <td align="center">
-      <span style="
+      <span
+        style="
         display:inline-block;
         padding:6px 14px;
         border-radius:20px;
@@ -25,7 +19,8 @@
         font-weight:bold;
         color:white;
         background-color:{{ badge_bg }};
-      ">
+      "
+      >
         {{ label }}
       </span>
     </td>
@@ -33,69 +28,125 @@
 </table>
 
 <!-- INTRO -->
-<p style="margin:0 0 15px; font-size:16px;">
-  Atlas has started and completed initial system diagnostics.
+<p style="margin: 0 0 15px; font-size: 16px">
+  Atlas completed system diagnostics.
 </p>
 
 <!-- SYSTEM INFO -->
-<table width="100%" cellpadding="0" cellspacing="0"
-       style="background-color:#1f2937; border-radius:8px; margin-bottom:15px;">
+<table
+  width="100%"
+  cellpadding="0"
+  cellspacing="0"
+  style="background-color: #1f2937; border-radius: 8px; margin-bottom: 15px"
+>
   <tr>
-    <td style="padding:15px;">
-      <p style="margin:0 0 8px;"><strong>Environment:</strong> {{ environment }}</p>
-      <p style="margin:0 0 8px;"><strong>Timestamp:</strong> {{ timestamp }}</p>
-      <p style="margin:0;"><strong>Source:</strong> {{ source }}</p>
+    <td style="padding: 15px">
+      <p style="margin: 0 0 8px">
+        <strong>Environment:</strong> {{ environment }}
+      </p>
+      <p style="margin: 0 0 8px"><strong>Timestamp:</strong> {{ timestamp }}</p>
+      <p style="margin: 0"><strong>Source:</strong> {{ source }}</p>
     </td>
   </tr>
 </table>
 
-<!-- SYSTEM HEALTH DASHBOARD -->
-<table width="100%" cellpadding="0" cellspacing="0"
-       style="background-color:#1f2937; border-radius:8px;">
+<!-- SYSTEM HEALTH -->
+<table
+  width="100%"
+  cellpadding="0"
+  cellspacing="0"
+  style="background-color: #1f2937; border-radius: 8px"
+>
   <tr>
-    <td style="padding:15px;">
-
-      <p style="margin:0 0 15px; font-weight:bold; font-size:14px;">
+    <td style="padding: 15px">
+      <p style="margin: 0 0 15px; font-weight: bold; font-size: 14px">
         🧠 System Health
       </p>
 
-      {% for service in services %}
+      {% for service in services %} {% set svc_status = service.status | upper
+      %} {% set svc_severity = service.severity | lower %}
 
-      <!-- SERVICE CARD -->
-      <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:10px;">
+      <table
+        width="100%"
+        cellpadding="0"
+        cellspacing="0"
+        style="margin-bottom: 12px"
+      >
         <tr>
-          <td style="padding:10px; background-color:#111827; border-radius:6px;">
+          <td
+            style="padding: 12px; background-color: #111827; border-radius: 6px"
+          >
+            <!-- SERVICE NAME -->
+            <strong style="font-size: 14px">{{ service.service }}</strong><br />
 
-            <strong>{{ service.service }}</strong><br/>
+            <!-- STATUS PILL -->
+            {% if svc_status == "DISCONNECTED" or svc_severity == "critical" %}
+            <span
+              style="
+                display: inline-block;
+                margin-top: 6px;
+                padding: 4px 10px;
+                font-size: 11px;
+                font-weight: bold;
+                border-radius: 999px;
+                color: #fecaca;
+                background-color: #7f1d1d;
+              "
+            >
+              ✖ {{ service.status }}
+            </span>
 
-            {% if service.severity == "critical" %}
-              <span style="color:#ef4444;">✖ {{ service.status }}</span>
-            {% elif service.severity == "warning" %}
-              <span style="color:#f59e0b;">⚠ {{ service.status }}</span>
+            {% elif svc_status == "DEGRADED" or svc_severity == "warning" %}
+            <span
+              style="
+                display: inline-block;
+                margin-top: 6px;
+                padding: 4px 10px;
+                font-size: 11px;
+                font-weight: bold;
+                border-radius: 999px;
+                color: #fde68a;
+                background-color: #78350f;
+              "
+            >
+              ⚠ {{ service.status }}
+            </span>
+
             {% else %}
-              <span style="color:#10b981;">✔ {{ service.status }}</span>
+            <span
+              style="
+                display: inline-block;
+                margin-top: 6px;
+                padding: 4px 10px;
+                font-size: 11px;
+                font-weight: bold;
+                border-radius: 999px;
+                color: #bbf7d0;
+                background-color: #065f46;
+              "
+            >
+              ✔ {{ service.status }}
+            </span>
             {% endif %}
 
+            <!-- MESSAGE -->
             {% if service.message %}
-              <br/>
-              <span style="font-size:12px; color:#9ca3af;">
-                {{ service.message }}
-              </span>
+            <div style="margin-top: 6px; font-size: 12px; color: #9ca3af">
+              {{ service.message }}
+            </div>
             {% endif %}
 
+            <!-- LATENCY -->
             {% if service.details and service.details.latency_ms %}
-              <br/>
-              <span style="font-size:11px; color:#6b7280;">
-                ⏱ {{ service.details.latency_ms }} ms
-              </span>
+            <div style="margin-top: 4px; font-size: 11px; color: #6b7280">
+              ⏱ {{ service.details.latency_ms }} ms
+            </div>
             {% endif %}
-
           </td>
         </tr>
       </table>
 
       {% endfor %}
-
     </td>
   </tr>
 </table>

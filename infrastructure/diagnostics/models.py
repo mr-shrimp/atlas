@@ -5,12 +5,32 @@ from typing import Any, Dict
 
 
 class HealthCheckStatus(Enum):
+    """Represents the connectivity or operational state of a system component.
+
+    Enum values:
+        CONNECTED (str): Service is fully operational and reachable.
+        DISCONNECTED (str): Service is not reachable or not connected.
+        DEGRADED (str): Service is operational but experiencing reduced performance
+            or partial issues.
+        FAILED (str): Service has encountered a failure and is not functioning correctly.
+    """
+
     CONNECTED: str = "CONNECTED"
+    DISCONNECTED: str = "DISCONNECTED"
     DEGRADED: str = "DEGRADED"
     FAILED: str = "FAILED"
 
 
 class HealthCheckSeverity(Enum):
+    """Represents the severity level associated with a health check result.
+
+    Enum values:
+        INFO (str): Informational state indicating normal operation.
+        WARNING (str): Indicates a potential issue or suboptimal condition that
+            does not yet critically impact functionality.
+        CRITICAL (str): Indicates a severe issue requiring immediate attention.
+    """
+
     INFO: str = "INFO"
     WARNING: str = "WARNING"
     CRITICAL: str = "CRITICAL"

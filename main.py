@@ -3,19 +3,15 @@ import threading
 import time
 from datetime import datetime, timezone
 
-from sqlalchemy import text
-
 import events.email_handlers  # noqa: F401
-from infrastructure.bus.event_bus import get_redis, publish, subscribe
+from infrastructure.bus.event_bus import publish, subscribe
 from infrastructure.bus.event_router import register, route_event
 from infrastructure.bus.event_schema import Event, create_event
 from infrastructure.config import config
-from infrastructure.database import get_engine
 from infrastructure.diagnostics.evaluator import evaluate
 from infrastructure.diagnostics.health_registry import run_all_checks
 from infrastructure.diagnostics.reporter import report_diagnostics
 from infrastructure.logging import configure_logging, get_logger
-from services.alert_service import evaluate_system_health
 
 SEND_TEST_EMAIL: bool = True
 
@@ -50,6 +46,7 @@ def run_start_up_diagnostics():
     import infrastructure.diagnostics.health_checks.database_check  # noqa
     import infrastructure.diagnostics.health_checks.logging_check  # noqa
     import infrastructure.diagnostics.health_checks.redis_check  # noqa
+    import infrastructure.diagnostics.health_checks.scheduler_check  # noqa
 
     results = run_all_checks()
     report = evaluate(results)

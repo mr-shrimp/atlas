@@ -11,6 +11,12 @@
     │   ├── routes
     │   ├── schemas
     │   └── dependencies.py
+    ├── branding
+    │   ├── project_files
+    │   │   ├── logo_black.xcf
+    │   │   └── logo_white.xcf
+    │   ├── logo_black.png
+    │   └── logo_white.png
     ├── communications
     │   └── templates
     │       └── email
@@ -24,6 +30,7 @@
     ├── db
     │   ├── migrations
     │   │   ├── versions
+    │   │   │   ├── b1a83cc8f4ed_add_scheduler_system.py
     │   │   │   └── da3d6b5a26fa_initial_schema.py
     │   │   ├── env.py
     │   │   ├── README
@@ -50,6 +57,9 @@
     │   │   │   │   ├── team.py
     │   │   │   │   ├── team_member.py
     │   │   │   │   └── team_role.py
+    │   │   │   ├── automation
+    │   │   │   │   ├── scheduled_task.py
+    │   │   │   │   └── scheduled_task_execution.py
     │   │   │   └── identity
     │   │   │       ├── being.py
     │   │   │       ├── being_role.py
@@ -78,12 +88,23 @@
     │   │   ├── event_bus.py
     │   │   ├── event_router.py
     │   │   └── event_schema.py
+    │   ├── diagnostics
+    │   │   ├── health_checks
+    │   │   │   ├── database_check.py
+    │   │   │   ├── logging_check.py
+    │   │   │   ├── redis_check.py
+    │   │   │   └── scheduler_check.py
+    │   │   ├── evaluator.py
+    │   │   ├── health_registry.py
+    │   │   ├── models.py
+    │   │   └── reporter.py
     │   ├── handlers
     │   │   └── system_handlers.py
     │   ├── config.py
     │   ├── database.py
     │   ├── logging.py
-    │   └── session.py
+    │   ├── session.py
+    │   └── startup.py
     ├── interfaces
     │   ├── cli
     │   │   └── cli_interface.py
@@ -104,12 +125,11 @@
     │   ├── trask_router.py
     │   └── workflow_engine.py
     ├── scheduler
-    │   ├── celery_app.py
-    │   ├── scheduled_jobs.py
-    │   └── task_dispatcher.py
+    │   └── scheduler.py
     ├── services
     │   ├── alert_service.py
     │   ├── email_service.py
+    │   ├── system_report_service.py
     │   └── template_service.py
     ├── tests
     │   ├── test_agents.py
@@ -131,6 +151,7 @@
     ├── .env.example
     ├── .gitignore
     ├── alembic.ini
+    ├── folder_structure.txt
     ├── main.py
     ├── README.md
     └── requirements.txt
